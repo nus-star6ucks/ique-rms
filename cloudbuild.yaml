@@ -1,0 +1,39 @@
+steps:
+# Step 1
+- name: 'pkg.dev/cloud-builders/docker' 
+  entrypoint: 'bash'
+  args: [
+   '-c', 
+   'docker pull asia-southeast1-docker.pkg.dev/$PROJECT_ID/$PROJECT_ID/ique-python:latest || exit 0'
+  ]
+# Step 2
+- name: 'pkg.dev/cloud-builders/docker'
+  args: [
+   'build', 
+   '-t', 
+   'asia-southeast1-docker.pkg.dev/$PROJECT_ID/$PROJECT_ID/ique-python:latest',
+   '.'
+  ]
+  dir: 'ique-python'
+# Step 3
+- name: 'pkg.dev/cloud-builders/kubectl'
+  args: ['apply', '-f', 'k8s/']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=asia-southeast1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=ique-python'
+# Step 4
+- name: 'pkg.dev/cloud-builders/kubectl'
+  args: [
+   'set', 
+   'image', 
+   'deployment', 
+   'ique-python', 
+   'ique-python=asia-southeast1-docker.pkg.dev/$PROJECT_ID/$PROJECT_ID/ique-python:latest'
+  ]
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=asia-southeast1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=ique-python'
+  # Push the image to Google Container Registry with the latest tag
+images: [
+   'asia-southeast1-docker.pkg.dev/$PROJECT_ID/$PROJECT_ID/ique-python:latest'
+  ]
