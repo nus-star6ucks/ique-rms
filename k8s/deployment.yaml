@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: ique-python
-  name: ique-python
+    run: ique-report
+  name: ique-report
 spec:
   replicas: 2
   selector:
     matchLabels:
-      run: ique-python
+      run: ique-report
   template:
     metadata:
       labels:
-        run: ique-python
+        run: ique-report
     spec:
       containers:
-      - image: asia-southeast1-docker.pkg.dev/ique-star6ucks/ique-star6ucks/ique-python:latest
-        name: ique-python
+      - image: asia-southeast1-docker.pkg.dev/ique-star6ucks/ique-star6ucks/ique-report:latest
+        name: ique-report
         ports:
         - containerPort: 5000

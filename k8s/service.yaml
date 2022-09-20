@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: ique-python
+  name: ique-report
 spec:
   selector:
-     run: ique-python
+     run: ique-report
   ports:
   - protocol: TCP
-    port: 80
+    port: 5000
     targetPort: 5000
   type: LoadBalancer
