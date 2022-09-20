@@ -19,9 +19,9 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GAR_LOCATION: asia-southeast1
-  GKE_CLUSTER: ique-report    # TODO: update to cluster name
+  GKE_CLUSTER: ique-app    # TODO: update to cluster name
   GKE_ZONE: asia-southeast1-a  
-  DEPLOYMENT_NAME: ique-app # TODO: update to deployment name
+  DEPLOYMENT_NAME: ique-report # TODO: update to deployment name
   REPOSITORY: ique-star6ucks
   IMAGE: ique-report
 
