@@ -76,6 +76,7 @@ If you want even more control over the environment, you can [deploy your contain
 ```python
 from google.cloud.sql.connector import Connector, IPTypes
 import sqlalchemy
+import pymysql
 ```
 
 ## IAM
@@ -113,6 +114,12 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './_key.json'
 ## Connection
 7. Set connection information
 ```python
+from google.cloud.sql.connector import Connector, IPTypes
+import sqlalchemy
+import pymysql
+
+connector = Connector()
+
 # function to return the database connection
 def getconn() -> pymysql.connections.Connection:
     conn: pymysql.connections.Connection = connector.connect(
