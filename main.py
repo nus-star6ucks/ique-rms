@@ -7,9 +7,7 @@ import pymysql
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './_key.json'
 
 # os.environ.se
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+
 
 # auth.authenticate_user()
 

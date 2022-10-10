@@ -69,7 +69,7 @@ gcloud run deploy helloworld --image gcr.io/[PROJECT-ID]/helloworld --region us-
 
 If you want even more control over the environment, you can [deploy your container image to Cloud Run on GKE](https://cloud.google.com/run/docs/quickstarts/prebuilt-deploy-gke). With Cloud Run on GKE, you can run your function on a GKE cluster, which gives you additional control over the environment (including use of GPU-based instances, longer timeouts and more).
 
-# Connect to Gcloud MySQL
+# Connect to Google cloud MySQL
 
 [GoogleCloudPlatform : cloud-sql-python-connector](https://github.com/GoogleCloudPlatform/cloud-sql-python-connector)
 
@@ -84,20 +84,16 @@ import pymysql
 1. Add principles role
    1. Cloud SQL Admin
    2. Cloud SQL Client
-![](../../../../../../../../../var/folders/69/p0sgjx_x06g3dps3xb05kq7r0000gn/T/TemporaryItems/NSIRD_screencaptureui_y8EztU/截屏2022-10-04 22.01.32.png)
-
-
+![](./resource/1.png)
+   
 2. Create service account 
-![](../../../../../../../../../var/folders/69/p0sgjx_x06g3dps3xb05kq7r0000gn/T/TemporaryItems/NSIRD_screencaptureui_S3VzQj/截屏2022-10-04 22.05.02.png)
-
+![](./resource/2.png)
 
 3. Generate KEY and Download Key.json file
-![](../../../../../../../../../var/folders/69/p0sgjx_x06g3dps3xb05kq7r0000gn/T/TemporaryItems/NSIRD_screencaptureui_jShWNy/截屏2022-10-04 22.05.18.png)
-
+![](./resource/3.png)
 
 4. Move Key.json file to project file
-![](../../../../../../../../../var/folders/69/p0sgjx_x06g3dps3xb05kq7r0000gn/T/TemporaryItems/NSIRD_screencaptureui_Q7eOz8/截屏2022-10-04 22.06.38.png)
-
+![](./resource/4.png)
 
 5. Add environment into code
 ```python
@@ -108,8 +104,7 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './_key.json'
 
 ## Create DB 
 6. Create new DB in Cloud SQL instance
-![](../../../../../../../../../var/folders/69/p0sgjx_x06g3dps3xb05kq7r0000gn/T/TemporaryItems/NSIRD_screencaptureui_pz6GMV/截屏2022-10-04 22.10.34.png)
-
+![](./resource/5.png)
 
 ## Connection
 7. Set connection information
