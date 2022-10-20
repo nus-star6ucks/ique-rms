@@ -1,68 +1,75 @@
 import functions_framework
 import os
-from google.cloud.sql.connector import Connector, IPTypes
-import sqlalchemy
-import pymysql
 
+import report
+from report import Report, GetReport
+from flask import Flask, request
+
+# connection to Google cloud
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './_key.json'
 
-# os.environ.se
+app = Flask(__name__)
 
 
-# auth.authenticate_user()
-
-# initialize Connector object
-connector = Connector()
-
-
-# function to return the database connection
-def getconn() -> pymysql.connections.Connection:
-    conn: pymysql.connections.Connection = connector.connect(
-        "ique-star6ucks:asia-southeast1:queue-db",
-        "pymysql",
-        user="queue-manager",
-        password="rTJBMdkj6LrCSf0+",
-        db="zoe",
-        ip_type=IPTypes.PUBLIC,
-        enable_iam_auth=False
-    )
-    return conn
+@app.route('/')
+def test():
+    return 'Hello World'
 
 
-# create connection pool
-pool = sqlalchemy.create_engine(
-    "mysql+pymysql://",
-    creator=getconn,
-)
-
-# interact with Cloud SQL database using connection pool
-with pool.connect() as db_conn:
-    print('** gcloud DB : connect successfully!')
-    # query database
-    result = db_conn.execute("SELECT * from my_table").fetchall()
-
-connector.close()
-
-
-# [START functions_helloworld_get]
-
-@functions_framework.http
-def hello_get(request):
-    """HTTP Cloud Function.
-    Args:
-        request (flask.Request): The request object.
-        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
-    Returns:
-        The response text, or any set of values that can be turned into a
-        Response object using `make_response`
-        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
-    Note:
-        For more information on how Flask integrates with Cloud
-        Functions, see the `Writing HTTP functions` page.
-        <https://cloud.google.com/functions/docs/writing/http#http_frameworks>
+# @functions_framework.http
+# def getReports(request):
+@app.route('/get', methods=['GET'])
+def getReports():
     """
-    return 'Hello World!!!!'
+    return the store's all URL
+    :param request: storeID, merchantID, reportID
+    :return list<URL>
+    """
 
-# [END functions_helloworld_get]
+    storeId = request.args.get('storeId')
+    merchantId = request.args.get('merchantId')
+    reportId = request.args.get('reportId')
+    # print(f'* store id : {storeId}')
+    # print(f'* merchant id : {merchantId}')
+    # print(f'* report id : {reportId}')
 
-# [END functions_helloworld_http]
+    reports = report.GetReport(storeId, reportId, merchantId)
+
+    # for r in reports:
+    #     print(f"& report id : {r['report_id']} ; create time : {r['create_time']} ; type : {r['type']}")
+    #
+    # print('* Get successfully !! ')
+    # get reports
+    return reports
+
+
+# @functions_framework.http
+# def generateReport(request):
+@app.route('/generate', methods=['POST'])
+def generateReport():
+    """
+    [Scheduler]
+    generate the specific report for the store
+    :param request: storeID, reportType, unit
+    """
+    # print('$ generate method')
+
+    # storeID = request.args.get('storeId')
+    # reportType = request.args.get('reportType')
+    # unit = request.args.get('unit', 'week')
+
+    storeID = request.json['storeId']
+    reportType = request.json['reportType']
+    unit = request.json['unit']
+    # print(f'* store id : {storeID}')
+    # print(f'* report type : {reportType}')
+    # print(f'* unit : {unit}')
+
+    # generate report
+    newreport = Report(storeID, reportType, unit)
+
+    return newreport.url
+
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
