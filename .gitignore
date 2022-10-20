@@ -3,3 +3,9 @@ venv
 .DS_Store
 .idea/other.xml
 .idea/sqldialects.xml
+
+storeId
+unit: day month week
+{
+    "AWT":
+}
