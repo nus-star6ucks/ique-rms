@@ -4,11 +4,8 @@ Includes all functions used to generate Report
 from enum import Enum
 import datetime
 import pandas as pd
-import requests
-import Postgres
-import Mongo
-import GCloud
-from visual import generateURL
+from DB import Postgres, Mongo
+from .visual import generateURL
 
 prefix = 'https://mock.apifox.cn/m1/1701091-0-default'
 
