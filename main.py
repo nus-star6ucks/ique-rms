@@ -1,8 +1,7 @@
-import functions_framework
 import os
 
-import report
-from report import Report, GetReport
+from function import report
+from function.report import Report
 from flask import Flask, request
 
 # connection to Google cloud
