@@ -15,15 +15,20 @@ pgdb = PostgresqlExtDatabase('ique', user='ums')
 mysqldb = MySQLDatabase('qms')
 
 # pg DB model
+
+
 class PgBaseModel(Model):
     class Meta:
         database = pgdb
+
 
 class MySqlBaseModel(Model):
     class Meta:
         database = mysqldb
 
 # create pg table model
+
+
 class Store(PgBaseModel):
     id = BigIntegerField()
     name = TextField()
@@ -57,12 +62,10 @@ class Report(PgBaseModel):
     merchant_id = IntegerField()
     type = TextField()
     unit = TextField()
-    create_time = DateTimeField(default=datetime.datetime.now)  # year-month-day hour-minute-second
+    # year-month-day hour-minute-second
+    create_time = DateTimeField(default=datetime.datetime.now)
     url = TextField()
 
 
-# connect to Postgres DB
 pgdb.connect()
-pgdb.create_tables([Store, Ticket, Seattype, Report])
-# print('$ Postgres created !! ')
-
+mysqldb.connect()
