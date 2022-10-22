@@ -10,9 +10,11 @@ GCloud Postgres DB
 """
 # Connect to gcloud Postgres DB
 # DB name & user name
-pgdb = PostgresqlExtDatabase('ique', user='ums')
+pgdb = PostgresqlExtDatabase(
+    'ique', user='ums', host='34.124.142.13', password="&2ZxqMQF'2{fQT}b")
 
-mysqldb = MySQLDatabase('qms')
+mysqldb = MySQLDatabase('qms',  user='queue-manager',
+                        host='35.240.227.134', password="rTJBMdkj6LrCSf0+")
 
 # pg DB model
 
@@ -30,15 +32,19 @@ class MySqlBaseModel(Model):
 
 
 class Store(PgBaseModel):
+    class Meta:
+        table_name = 'store'
     id = BigIntegerField()
     name = TextField()
-    register_time = DateTimeField(default=datetime.datetime.now)
+    register_time = BigIntegerField()
     # register_time = TimestampField()
     # seatTypes = ArrayField(ForeignKeyField(seatType))
     merchant_id = BigIntegerField()
 
 
 class Seattype(PgBaseModel):
+    class Meta:
+        table_name = 'store_seat_types'
     id = BigIntegerField()
     name = TextField()
     store_id = BigIntegerField()
@@ -46,14 +52,16 @@ class Seattype(PgBaseModel):
 
 # create DB data model
 class Ticket(MySqlBaseModel):
-    ticket_id = IdentityField()
-    start_time = DateTimeField(default=datetime.datetime.now)
-    end_time = DateTimeField(default=datetime.datetime.now)
+    class Meta:
+        table_name = 'queue_ticket'
+
+    ticket_id = BigIntegerField()
+    start_time = BigIntegerField()
+    end_time = BigIntegerField()
     status = TextField()
     # start_time = TimestampField()
     # end_time = TimestampField()
-    store_id = ForeignKeyField(Store)
-    seattype_id = ForeignKeyField(Seattype)
+    store_id = BigIntegerField()
 
 
 class Report(PgBaseModel):

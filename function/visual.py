@@ -21,7 +21,7 @@ unitValue = {'day': 12,
 
 unitValueReverse = dict(zip(unitValue.values(), unitValue.keys()))
 
-localpath = "/Users/zoe/Desktop/NUS_ISS/SWE5001/Project/dev/iQueue/ique-api-report/figure/"
+localpath = "./figure/"
 postfix = ".html"
 
 

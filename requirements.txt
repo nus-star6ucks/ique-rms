@@ -13,5 +13,4 @@ matplotlib~=3.6.0
 PyMySQL~=1.0.2
 cloud-sql-python-connector
 peewee~=3.15.3
-mongoengine~=0.24.2
 plotly~=5.10.0

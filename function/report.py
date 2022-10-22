@@ -42,15 +42,17 @@ oneweek = oneday * 7
 
 ticketStatus = ['seated', 'pending', 'skipped']
 
-reportTypeValue = {'AWT': 1,
-                   'NUM': 2
-                   }
+reportTypeValue = {
+    'AWT': 1,
+    'NUM': 2
+}
 
-unitValue = {'day': 12,
-             'week': 7,
-             'month': 5,
-             'year': 13
-             }
+unitValue = {
+    'day': 12,
+    'week': 7,
+    'month': 5,
+    'year': 13
+}
 
 unitValueReverse = dict(zip(unitValue.values(), unitValue.keys()))
 
@@ -143,11 +145,11 @@ class Report:
         """
         # save report into SQL
         report = DB.Report.create(store_id=self.storeID,
-                                        type=self.reportType,
-                                        unit=self.unit,
-                                        create_time=self.createTime,
-                                        url=self.url,
-                                        merchant_id=self.store.merchant_id)
+                                  type=self.reportType,
+                                  unit=self.unit,
+                                  create_time=self.createTime,
+                                  url=self.url,
+                                  merchant_id=self.store.merchant_id)
         report.save()
 
         # get report ID
@@ -208,7 +210,7 @@ class Report:
         :return new-time
         """
         # print(f'& begin time : {time} ; factor : {factor}')
-        if op is '-':
+        if op == '-':
             if unit == UnitType.day.value:
                 return time - pd.DateOffset(hours=factor * 2)
             elif unit == UnitType.week.value:
@@ -271,7 +273,7 @@ class Report:
                 zone = int(
                     (t.start_time - self.begin).total_seconds() / factor)
             # print(f'& zone : {zone}')
-            if len(newTickets[zone]) is 0:
+            if len(newTickets[zone]) == 0:
                 newTickets[zone] = []
             newTickets[zone].append(t)
         #     print(f'& new tickets : {newTickets}')
@@ -290,20 +292,21 @@ class Report:
         """
         result = {}
 
-        if type is 'time':  # filter by time
+        if type == 'time':  # filter by time
 
             Tickets = []
             # ticket's start time should greater than or equal to beginTime
             # and its start time should not greater than endTime
             for t in tickets:
                 # print(f'# ticket id : {t.ticket_id} ; start time : {t.start_time}')
+                t.start_time = datetime.datetime.fromtimestamp(t.start_time / 1e3)
                 if self.begin <= t.start_time < self.end:
                     # print(f'# YES ')
                     Tickets.append(t)
             # print(f'# selected tickets : {Tickets}')
             # divided tickets according to unit
             result['time'] = self.divided(Tickets, unit)
-        elif type is 'status':  # filter by status
+        elif type == 'status':  # filter by status
             pendingT = []
             seatedT = []
             skippedT = []
@@ -320,13 +323,13 @@ class Report:
         else:
             # create array for every seat type ID
             for stype in seatType:
-                result[str(stype.seattype_id)] = []
-                # print(f'& seat type : {stype.seattype_id}')
+                result[str(stype.id)] = []
+                # print(f'& seat type : {stype.id}')
 
             # group tickets by its seat type ID
             for t in tickets:
-                # print(f'& ticket : {t.ticket_id} ; seat type:{t.seattype_id}')
-                result[str(t.seattype_id)].append(t)
+                # print(f'& ticket : {t.ticket_id} ; seat type:{t.id}')
+                result[str(t.id)].append(t)
 
         # print(f'& result array : {result}')
         # print(f'$ {type} / filter finish !! ')
@@ -348,7 +351,7 @@ class Report:
                 elif unit is UnitType.week.value:  # week : day date
                     d['Time'] = d['Time'].strftime("%m.%d")
                 elif unit is UnitType.month.value:  # month : day period
-                    if idx is 4:  # the end of last week is the end time of this report
+                    if idx == 4:  # the end of last week is the end time of this report
                         d['Time'] = d['Time'].strftime(
                             "%m.%d") + "-" + (self.end - pd.DateOffset(days=1)).strftime("%m.%d")
                     else:
@@ -373,6 +376,7 @@ class Report:
         """
         # get array[ticket]
         tickets = DB.Ticket.select().where(DB.Ticket.store_id == storeID)
+
         # for t in tickets:
         #     print(f'# start time : {t.start_time}')
 
@@ -380,7 +384,7 @@ class Report:
         seatType = DB.Seattype.select().where(
             DB.Seattype.store_id == storeID)
         # for s in seatType:
-        #     print(f'# seat type id : {s.seattype_id}')
+        #     print(f'# seat type id : {s.id}')
 
         # filter tickets by time
         tickets = self.filter('time', tickets, unit, {})['time']
@@ -413,22 +417,22 @@ class Report:
             T = self.time_count('+', self.begin, unit, idx)
             Data['Period ' + str(idx + 1)] = []
             for stype in seatType:
-                # print(f'& seat type : {stype.seattype_id}')
+                # print(f'& seat type : {stype.id}')
                 # only count when there are tickets
                 AWT = {'Time': T, 'Seat Type': stype.name,
-                       'Seat Type Id': stype.seattype_id, 'Average Wait Time': 0}
-                # print(f'& ticket list : {tlist[str(stype.seattype_id)]}')
-                # print(f'& list length : {len(tlist[str(stype.seattype_id)])}')
-                if len(tlist[str(stype.seattype_id)]) > 0:
-                    for t in tlist[str(stype.seattype_id)]:
+                       'Seat Type Id': stype.id, 'Average Wait Time': 0}
+                # print(f'& ticket list : {tlist[str(stype.id)]}')
+                # print(f'& list length : {len(tlist[str(stype.id)])}')
+                if len(tlist[str(stype.id)]) > 0:
+                    for t in tlist[str(stype.id)]:
                         # print(f"& ticket : {t.end_time} ; {t.start_time}")
                         # print(f"& ticket time : {t.end_time - t.start_time}")
                         AWT['Average Wait Time'] += (t.end_time -
                                                      t.start_time).total_seconds() / 60
                     # print(f"# Sum AWT : {AWT['Average Wait Time']}")
-                    # print(f'# ticket amount : {len(tlist[str(stype.seattype_id)])}')
+                    # print(f'# ticket amount : {len(tlist[str(stype.id)])}')
                     AWT['Average Wait Time'] = int(
-                        AWT['Average Wait Time'] / len(tlist[str(stype.seattype_id)]))  # assign new value to AWT
+                        AWT['Average Wait Time'] / len(tlist[str(stype.id)]))  # assign new value to AWT
                 # print(f'* AWT : {AWT}')
                 # period : array[data{time;seattype;seattypeid;awt}]
                 Data['Period ' + str(idx + 1)].append(AWT)
