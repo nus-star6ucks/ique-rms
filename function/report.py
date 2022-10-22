@@ -4,8 +4,12 @@ Includes all functions used to generate Report
 from enum import Enum
 import datetime
 import pandas as pd
-from DB import Postgres, Mongo
-from .visual import generateURL
+from DB import Postgres
+from function.visual import generateURL
+from google.cloud import firestore
+
+
+firestore_db = firestore.Client(project='ique-star6ucks')
 
 prefix = 'https://mock.apifox.cn/m1/1701091-0-default'
 
@@ -147,14 +151,28 @@ class Report:
         self.ID = report.report_id
 
         # save generated data into NoSQL
-        reportdata = Mongo.Reportdata(report_id=self.ID,
-                                      store_id=self.storeID,
-                                      data_type=self.reportType,
-                                      unit=self.unit,
-                                      start_time=self.begin,
-                                      end_time=self.end,
-                                      data=self.data)
-        reportdata.save()
+        # reportdata = Mongo.Reportdata(report_id=self.ID,
+        #                               store_id=self.storeID,
+        #                               data_type=self.reportType,
+        #                               unit=self.unit,
+        #                               start_time=self.begin,
+        #                               end_time=self.end,
+        #                               data=self.data)
+        # reportdata.save()
+
+        # Firestore
+        report_data = firestore_db.collection(u'reports').document()
+        report_data.set({
+            u'report_id': self.ID,
+            u'store_id': self.storeID,
+            u'data_type': self.reportType,
+            u'unit': self.unit,
+            u'start_time': self.begin,
+            u'end_time': self.end,
+            u'data': self.data
+        })
+
+
         # print('* Save DB successfully !')
 
     def getBeginTime(self, unit):

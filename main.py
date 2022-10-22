@@ -1,24 +1,15 @@
 import os
 
+import functions_framework
 from function import report
 from function.report import Report
-from flask import Flask, request
 
 # connection to Google cloud
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './_key.json'
 
-app = Flask(__name__)
 
-
-@app.route('/')
-def test():
-    return 'Hello World'
-
-
-# @functions_framework.http
-# def getReports(request):
-@app.route('/get', methods=['GET'])
-def getReports():
+@functions_framework.http
+def get_reports(request):
     """
     return the store's all URL
     :param request: storeID, merchantID, reportID
@@ -42,10 +33,9 @@ def getReports():
     return reports
 
 
-# @functions_framework.http
-# def generateReport(request):
-@app.route('/generate', methods=['POST'])
-def generateReport():
+# @app.route('/generate', methods=['POST'])
+@functions_framework.http
+def generate_report(request):
     """
     [Scheduler]
     generate the specific report for the store
@@ -68,7 +58,3 @@ def generateReport():
     newreport = Report(storeID, reportType, unit)
 
     return newreport.url
-
-
-if __name__ == '__main__':
-    app.run(port=5000, debug=True)
