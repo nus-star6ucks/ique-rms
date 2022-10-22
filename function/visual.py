@@ -1,9 +1,6 @@
 """
 Includes all functions used to visualization
 """
-import numpy as np
-import datetime
-import chart_studio.plotly as py
 import pandas as pd
 import plotly.express as px
 from enum import Enum
@@ -28,7 +25,7 @@ localpath = "/Users/zoe/Desktop/NUS_ISS/SWE5001/Project/dev/iQueue/ique-api-repo
 postfix = ".html"
 
 
-def generateURL(type, data, unit, store, creattime):
+def generate_url(type, data, unit, store, creattime):
     """
     generate diagram and return url to url-field
     :param type: report type

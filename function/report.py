@@ -4,14 +4,11 @@ Includes all functions used to generate Report
 from enum import Enum
 import datetime
 import pandas as pd
-from DB import Postgres
-from function.visual import generateURL
+from DB import DB
+from function.visual import generate_url
 from google.cloud import firestore
 
-
 firestore_db = firestore.Client(project='ique-star6ucks')
-
-prefix = 'https://mock.apifox.cn/m1/1701091-0-default'
 
 
 class ReportType(Enum):
@@ -58,7 +55,7 @@ unitValue = {'day': 12,
 unitValueReverse = dict(zip(unitValue.values(), unitValue.keys()))
 
 
-def GetReport(stID, reportID, merchantID):
+def get_reports(stID, reportID, merchantID):
     """
     get reports from DB
     :param stID: report ID
@@ -67,11 +64,14 @@ def GetReport(stID, reportID, merchantID):
     :return reports: array[report]
     """
     if reportID is not None:
-        reports = Postgres.Report.select().where(Postgres.Report.report_id == reportID).dicts()
+        reports = DB.Report.select().where(
+            DB.Report.report_id == reportID).dicts()
     elif stID is not None:
-        reports = Postgres.Report.select().where(Postgres.Report.store_id == stID).dicts()
+        reports = DB.Report.select().where(
+            DB.Report.store_id == stID).dicts()
     else:
-        reports = Postgres.Report.select().where(Postgres.Report.merchant_id == merchantID).dicts()
+        reports = DB.Report.select().where(
+            DB.Report.merchant_id == merchantID).dicts()
 
     return list(reports)
 
@@ -96,14 +96,15 @@ class Report:
         self.url = None
         self.begin = None
         # default end time is the start of next day of creat day (year-month-day-0-0-0-0)
-        self.end = (self.createTime + pd.DateOffset(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        self.end = (self.createTime + pd.DateOffset(days=1)
+                    ).replace(hour=0, minute=0, second=0, microsecond=0)
         self.store = None
         # count begin time
-        self.getBeginTime(unitValue[self.unit])
+        self.get_begin_time(unitValue[self.unit])
         # print(f'* begin time : {self.begin}')
         # print(f'* end time : {self.end}')
         # save store DB entity
-        store = Postgres.Store.select().where(Postgres.Store.store_id == self.storeID)
+        store = DB.Store.select().where(DB.Store.id == self.storeID)
         for s in store:
             self.store = s
 
@@ -112,17 +113,19 @@ class Report:
         # print('$ start generating .....')
 
         # generate url of this report
-        self.generateReport(self.storeID, reportTypeValue[self.reportType], unitValue[self.unit])
+        self.generate_report(
+            self.storeID, reportTypeValue[self.reportType], unitValue[self.unit])
         # reset data's time
-        self.resetTimezone(unitValue[self.unit])
-        self.url = generateURL(self.reportType, self.data, unitValue[self.unit], self.store, self.createTime)
+        self.reset_timezone(unitValue[self.unit])
+        self.url = generate_url(
+            self.reportType, self.data, unitValue[self.unit], self.store, self.createTime)
         # print(f'* Create URL Successful : {self.url}')
         # save report into SQL
-        self.saveData()
+        self.save_data()
         # print(f'* report id : {self.ID}')
         # print('* Done !')
 
-    def generateReport(self, storeID, rtype, unit):
+    def generate_report(self, storeID, rtype, unit):
         """
         generate report
         :param storeID: store ID
@@ -130,16 +133,16 @@ class Report:
         :param unit: time unit of report
         """
         if rtype == ReportType.AWT.value:
-            self.getAWT(storeID, unit)
+            self.get_awt(storeID, unit)
         elif rtype == ReportType.NUM.value:
             self.getWCNandADN(storeID, unit)
 
-    def saveData(self):
+    def save_data(self):
         """
         save data into DB: NoSQL / SQL
         """
         # save report into SQL
-        report = Postgres.Report.create(store_id=self.storeID,
+        report = DB.Report.create(store_id=self.storeID,
                                         type=self.reportType,
                                         unit=self.unit,
                                         create_time=self.createTime,
@@ -172,10 +175,9 @@ class Report:
             u'data': self.data
         })
 
-
         # print('* Save DB successfully !')
 
-    def getBeginTime(self, unit):
+    def get_begin_time(self, unit):
         """
         count begin time
         :param unit
@@ -184,15 +186,19 @@ class Report:
 
         # set integrate value: year-month-day-0-0-0-0
         if unit == UnitType.day.value:
-            self.begin = (self.end - pd.DateOffset(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            self.begin = (self.end - pd.DateOffset(days=1)
+                          ).replace(hour=0, minute=0, second=0, microsecond=0)
         elif unit == UnitType.week.value:
-            self.begin = (self.end - pd.DateOffset(weeks=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            self.begin = (self.end - pd.DateOffset(weeks=1)
+                          ).replace(hour=0, minute=0, second=0, microsecond=0)
         elif unit == UnitType.month.value:
-            self.begin = (self.end - pd.DateOffset(months=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            self.begin = (self.end - pd.DateOffset(months=1)
+                          ).replace(hour=0, minute=0, second=0, microsecond=0)
         elif unit == UnitType.year.value:
-            self.begin = (self.end - pd.DateOffset(years=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            self.begin = (self.end - pd.DateOffset(years=1)
+                          ).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    def timeCount(self, op, time, unit, factor):
+    def time_count(self, op, time, unit, factor):
         """
         define calculate time
         :param op
@@ -223,7 +229,7 @@ class Report:
             elif unit == UnitType.year.value:
                 return time + pd.DateOffset(months=factor)
 
-    def Divided(self, tickets, unit):
+    def divided(self, tickets, unit):
         """
         divided tickets into different time zone
         :param unit
@@ -253,7 +259,8 @@ class Report:
             if unit is UnitType.year.value:                    # divided by month
                 zone = t.start_time.month       # firstly divided by its month
 
-                if t.start_time.day < self.begin.day:          # if day less than begin date, it should be divided into last zone
+                # if day less than begin date, it should be divided into last zone
+                if t.start_time.day < self.begin.day:
                     zone -= 1
 
                 if t.start_time.year > self.begin.year:        # current year: backward
@@ -261,7 +268,8 @@ class Report:
                 else:                                          # last year: forward
                     zone -= self.begin.month
             else:
-                zone = int((t.start_time - self.begin).total_seconds() / factor)
+                zone = int(
+                    (t.start_time - self.begin).total_seconds() / factor)
             # print(f'& zone : {zone}')
             if len(newTickets[zone]) is 0:
                 newTickets[zone] = []
@@ -271,7 +279,7 @@ class Report:
         # print(newTickets)
         return newTickets
 
-    def Filter(self, type, tickets, unit, seatType):
+    def filter(self, type, tickets, unit, seatType):
         """
         filter tickets by type according to data
         :param type: filter choice[time,status,seat]
@@ -294,7 +302,7 @@ class Report:
                     Tickets.append(t)
             # print(f'# selected tickets : {Tickets}')
             # divided tickets according to unit
-            result['time'] = self.Divided(Tickets, unit)
+            result['time'] = self.divided(Tickets, unit)
         elif type is 'status':  # filter by status
             pendingT = []
             seatedT = []
@@ -324,7 +332,7 @@ class Report:
         # print(f'$ {type} / filter finish !! ')
         return result
 
-    def resetTimezone(self, unit):
+    def reset_timezone(self, unit):
         """
         convert data's time field into diagram value
        :param unit:
@@ -335,22 +343,28 @@ class Report:
         for idx in range(0, ending):
             for d in self.data['Period ' + str(idx + 1)]:
                 if unit is UnitType.day.value:  # day : hour period
-                    d['Time'] = d['Time'].strftime("%H:%M") + "-" + (d['Time'] + pd.DateOffset(hours=2)).strftime("%H:%M")
+                    d['Time'] = d['Time'].strftime(
+                        "%H:%M") + "-" + (d['Time'] + pd.DateOffset(hours=2)).strftime("%H:%M")
                 elif unit is UnitType.week.value:  # week : day date
                     d['Time'] = d['Time'].strftime("%m.%d")
                 elif unit is UnitType.month.value:  # month : day period
                     if idx is 4:  # the end of last week is the end time of this report
-                        d['Time'] = d['Time'].strftime("%m.%d") + "-" + (self.end - pd.DateOffset(days=1)).strftime("%m.%d")
+                        d['Time'] = d['Time'].strftime(
+                            "%m.%d") + "-" + (self.end - pd.DateOffset(days=1)).strftime("%m.%d")
                     else:
-                        d['Time'] = d['Time'].strftime("%m.%d") + "-" + (d['Time'] + pd.DateOffset(weeks=1)).strftime("%m.%d")
+                        d['Time'] = d['Time'].strftime(
+                            "%m.%d") + "-" + (d['Time'] + pd.DateOffset(weeks=1)).strftime("%m.%d")
                 elif unit is UnitType.year.value:  # year : month period
-                    right = d['Time'] + pd.DateOffset(months=1) - pd.DateOffset(days=1)
+                    right = d['Time'] + \
+                        pd.DateOffset(months=1) - pd.DateOffset(days=1)
                     if right.year == d['Time'].year:
-                        d['Time'] = d['Time'].strftime("%y.%m.%d") + "-" + right.strftime("%m.%d")
+                        d['Time'] = d['Time'].strftime(
+                            "%y.%m.%d") + "-" + right.strftime("%m.%d")
                     else:
-                        d['Time'] = d['Time'].strftime("%y.%m.%d") + "-" + right.strftime("%y.%m.%d")
+                        d['Time'] = d['Time'].strftime(
+                            "%y.%m.%d") + "-" + right.strftime("%y.%m.%d")
 
-    def getAWT(self, storeID, unit):
+    def get_awt(self, storeID, unit):
         """
         generate AWT report for thr store
         :param storeID:
@@ -358,17 +372,18 @@ class Report:
         :return URL
         """
         # get array[ticket]
-        tickets = Postgres.Ticket.select().where(Postgres.Ticket.store_id == storeID)
+        tickets = DB.Ticket.select().where(DB.Ticket.store_id == storeID)
         # for t in tickets:
         #     print(f'# start time : {t.start_time}')
 
         # get seat type of the store
-        seatType = Postgres.Seattype.select().where(Postgres.Seattype.store_id == storeID)
+        seatType = DB.Seattype.select().where(
+            DB.Seattype.store_id == storeID)
         # for s in seatType:
         #     print(f'# seat type id : {s.seattype_id}')
 
         # filter tickets by time
-        tickets = self.Filter('time', tickets, unit, {})['time']
+        tickets = self.filter('time', tickets, unit, {})['time']
 
         newtickets = []
         ending = unit
@@ -382,7 +397,7 @@ class Report:
             #     break
             # print(f'# time zone : {idx}')
             idx += 1
-            newtickets.append(self.Filter('seat', tlist, unit, seatType))
+            newtickets.append(self.filter('seat', tlist, unit, seatType))
 
         # print('* new tickets filter by seat type')
         # print(newtickets)
@@ -395,25 +410,28 @@ class Report:
         for tlist in newtickets[:ending]:
             # print(f'# time zone : {idx} ---- ')
             # count unit begin time
-            T = self.timeCount('+', self.begin, unit, idx)
+            T = self.time_count('+', self.begin, unit, idx)
             Data['Period ' + str(idx + 1)] = []
             for stype in seatType:
                 # print(f'& seat type : {stype.seattype_id}')
                 # only count when there are tickets
-                AWT = {'Time': T, 'Seat Type': stype.name, 'Seat Type Id': stype.seattype_id, 'Average Wait Time': 0}
+                AWT = {'Time': T, 'Seat Type': stype.name,
+                       'Seat Type Id': stype.seattype_id, 'Average Wait Time': 0}
                 # print(f'& ticket list : {tlist[str(stype.seattype_id)]}')
                 # print(f'& list length : {len(tlist[str(stype.seattype_id)])}')
                 if len(tlist[str(stype.seattype_id)]) > 0:
                     for t in tlist[str(stype.seattype_id)]:
                         # print(f"& ticket : {t.end_time} ; {t.start_time}")
                         # print(f"& ticket time : {t.end_time - t.start_time}")
-                        AWT['Average Wait Time'] += (t.end_time - t.start_time).total_seconds() / 60
+                        AWT['Average Wait Time'] += (t.end_time -
+                                                     t.start_time).total_seconds() / 60
                     # print(f"# Sum AWT : {AWT['Average Wait Time']}")
                     # print(f'# ticket amount : {len(tlist[str(stype.seattype_id)])}')
                     AWT['Average Wait Time'] = int(
                         AWT['Average Wait Time'] / len(tlist[str(stype.seattype_id)]))  # assign new value to AWT
                 # print(f'* AWT : {AWT}')
-                Data['Period ' + str(idx + 1)].append(AWT)  # period : array[data{time;seattype;seattypeid;awt}]
+                # period : array[data{time;seattype;seattypeid;awt}]
+                Data['Period ' + str(idx + 1)].append(AWT)
                 # print(f'* {Data}')
             idx += 1
 
@@ -430,12 +448,12 @@ class Report:
         :return URL
         """
         # get array[ticket]1
-        tickets = Postgres.Ticket.select().where(Postgres.Ticket.store_id == storeID)
+        tickets = DB.Ticket.select().where(DB.Ticket.store_id == storeID)
         # for t in tickets:
         #     print(f'# start time : {t.start_time}')
 
         # filter tickets by time firstly
-        tickets = self.Filter('time', tickets, unit, {})['time']
+        tickets = self.filter('time', tickets, unit, {})['time']
 
         newtickets = []
         ending = unit
@@ -446,7 +464,7 @@ class Report:
         for tlist in tickets[:ending]:
             # print(f'# time zone : {idx}')
             idx += 1
-            newtickets.append(self.Filter('status', tlist, unit, {}))
+            newtickets.append(self.filter('status', tlist, unit, {}))
 
         # print('* new tickets filter by status')
         # print(newtickets)
@@ -456,12 +474,13 @@ class Report:
 
         idx = 0
         for tlist in newtickets[:ending]:
-            T = self.timeCount('+', self.begin, unit, idx)
+            T = self.time_count('+', self.begin, unit, idx)
             Data['Period ' + str(idx + 1)] = []
             for s in ticketStatus:
                 num = {'Time': T, 'Status': s, 'Number': len(tlist[s])}
                 # print(f'# data : {num}')
-                Data['Period ' + str(idx + 1)].append(num)  # period : data{time;number
+                # period : data{time;number
+                Data['Period ' + str(idx + 1)].append(num)
             # print(f'* {Data}')
             idx += 1
 

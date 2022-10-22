@@ -1,5 +1,5 @@
 """
-Test for generateReport method
+Test for generate_report method
 """
 import requests
 
