@@ -24,7 +24,7 @@ unitValue = {'day': 12,
 
 unitValueReverse = dict(zip(unitValue.values(), unitValue.keys()))
 
-localpath = "./figure/"
+base_destination_path = "/reports/"
 postfix = ".html"
 
 
@@ -74,7 +74,7 @@ def generate_url(type, data, unit, store, creattime):
     setView(type, fig, store, creattime)
     # print(f'* visualization : {fig}')
 
-    return localpath + str(store.id) + "-" + str(creattime) + "-" + type + postfix
+    return base_destination_path + str(store.id) + "-" + str(creattime) + "-" + type + postfix
 
 
 def setView(type, fig, store, creattime):
