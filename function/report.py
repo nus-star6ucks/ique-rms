@@ -6,9 +6,14 @@ import datetime
 import pandas as pd
 from DB import DB
 from function.visual import generate_url
-from google.cloud import firestore
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
-firestore_db = firestore.Client(project='ique-star6ucks')
+firebase_admin.initialize_app(credentials.ApplicationDefault(), {
+    'projectId': 'ique-star6ucks',
+})
+firestore_db = firestore.client()
 
 
 class ReportType(Enum):

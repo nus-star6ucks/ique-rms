@@ -1,11 +1,7 @@
-import os
 
 import functions_framework
 from function import report
 from function.report import Report
-
-# connection to Google cloud
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './_key.json'
 
 
 @functions_framework.http

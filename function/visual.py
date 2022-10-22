@@ -3,9 +3,12 @@ Includes all functions used to visualization
 """
 import pandas as pd
 import plotly.express as px
+import os
 from enum import Enum
+from google.cloud import storage
 
-
+storage_client = storage.Client()
+bucket = storage_client.bucket('ique-app-prod')
 class UnitType(Enum):
     day = 12  # minium interval = 2 hours
     week = 7  # minium interval = day
@@ -71,7 +74,7 @@ def generate_url(type, data, unit, store, creattime):
     setView(type, fig, store, creattime)
     # print(f'* visualization : {fig}')
 
-    return localpath + store.name + "-" + str(creattime) + "-" + type + postfix
+    return localpath + str(store.id) + "-" + str(creattime) + "-" + type + postfix
 
 
 def setView(type, fig, store, creattime):
@@ -146,8 +149,13 @@ def setView(type, fig, store, creattime):
         fig.update_traces(textfont_size=15, textfont_color='black', textangle=0, textposition="outside", cliponaxis=False)
 
     fig.show()
-    # print(f'& show figure')
-    fig.write_html("./figure/" + store.name + "-" + str(creattime) + "-" + type + postfix)
-    # url = py.iplot(fig, filename=store.name + "-" + str(creattime) + "-" + type + postfix)
-    # print(f'* url : {url}')
 
+    filename = str(store.id) + "-" + str(creattime) + "-" + type + postfix
+
+    file_path = "./figure/" + filename
+    fig.write_html(file_path)
+
+    blob = bucket.blob('reports/' + filename)
+    blob.upload_from_filename(file_path)
+
+    os.remove(file_path)
