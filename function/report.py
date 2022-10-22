@@ -299,7 +299,6 @@ class Report:
             # and its start time should not greater than endTime
             for t in tickets:
                 # print(f'# ticket id : {t.ticket_id} ; start time : {t.start_time}')
-                t.start_time = datetime.datetime.fromtimestamp(t.start_time / 1e3)
                 if self.begin <= t.start_time < self.end:
                     # print(f'# YES ')
                     Tickets.append(t)
@@ -377,6 +376,10 @@ class Report:
         # get array[ticket]
         tickets = DB.Ticket.select().where(DB.Ticket.store_id == storeID)
 
+        for t in tickets:
+            t.start_time = datetime.datetime.fromtimestamp(t.start_time / 1e3)
+            t.end_time = datetime.datetime.fromtimestamp(t.end_time / 1e3)
+
         # for t in tickets:
         #     print(f'# start time : {t.start_time}')
 
@@ -453,8 +456,10 @@ class Report:
         """
         # get array[ticket]1
         tickets = DB.Ticket.select().where(DB.Ticket.store_id == storeID)
-        # for t in tickets:
-        #     print(f'# start time : {t.start_time}')
+
+        for t in tickets:
+            t.start_time = datetime.datetime.fromtimestamp(t.start_time / 1e3)
+            t.end_time = datetime.datetime.fromtimestamp(t.end_time / 1e3)
 
         # filter tickets by time firstly
         tickets = self.filter('time', tickets, unit, {})['time']

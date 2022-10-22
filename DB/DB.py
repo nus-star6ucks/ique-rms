@@ -77,3 +77,5 @@ class Report(PgBaseModel):
 
 pgdb.connect()
 mysqldb.connect()
+
+pgdb.create_tables([Report])
