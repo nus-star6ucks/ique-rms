@@ -11,10 +11,10 @@ GCloud Postgres DB
 # Connect to gcloud Postgres DB
 # DB name & user name
 pgdb = PostgresqlExtDatabase(
-    'ique', user='ums', password="&2ZxqMQF'2{fQT}b", unix_socket='/cloudsql/ique-star6ucks:asia-southeast1:iqueue')
+    'ique', user='ums', password="&2ZxqMQF'2{fQT}b", host='/cloudsql/ique-star6ucks:asia-southeast1:iqueue')
 
 mysqldb = MySQLDatabase('qms',  user='queue-manager',
-                        password="rTJBMdkj6LrCSf0+", unix_socket='/cloudsql/ique-star6ucks:asia-southeast1:queue-db')
+                        password="rTJBMdkj6LrCSf0+", host='/cloudsql/ique-star6ucks:asia-southeast1:queue-db')
 
 # pg DB model
 
