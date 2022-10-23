@@ -8,13 +8,6 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GAR_LOCATION: asia-southeast1
-  GKE_CLUSTER: ique-app  
-  GKE_ZONE: asia-southeast1-a  
-  DEPLOYMENT_NAME: ique-sms
-  REPOSITORY: ique-star6ucks
-  IMAGE: ique-sms
-
 jobs:
   setup-build-publish-deploy:
     name: Deploy
@@ -40,13 +33,14 @@ jobs:
         name: 'generate-report'
         runtime: 'python310'
         entry_point: 'generate_report'
-        project_id: 'ique-star6ucks'
+        project_id: '${{ env.PROJECT_ID }}'
         
     - id: 'deploy-get-reports'
       uses: 'google-github-actions/deploy-cloud-functions@v0'
       with:
         name: 'get-reports'
         runtime: 'python310'
+        region: 'asia-east2'
         entry_point: 'generate_report'
-        project_id: 'ique-star6ucks'
+        project_id: '${{ env.PROJECT_ID }}'
 
