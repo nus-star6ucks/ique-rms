@@ -34,14 +34,14 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - id: 'deploy generate-report'
+    - id: 'deploy-generate-report'
       uses: 'google-github-actions/deploy-cloud-functions@v0'
       with:
         name: 'generate-report'
         runtime: 'python3.10'
         entry_point: 'generate_report'
         
-    - id: 'deploy get-reports'
+    - id: 'deploy-get-reports'
       uses: 'google-github-actions/deploy-cloud-functions@v0'
       with:
         name: 'get-reports'
