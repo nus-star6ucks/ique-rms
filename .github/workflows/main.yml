@@ -40,6 +40,7 @@ jobs:
         name: 'generate-report'
         runtime: 'python3.10'
         entry_point: 'generate_report'
+        project_id: 'ique-star6ucks'
         
     - id: 'deploy-get-reports'
       uses: 'google-github-actions/deploy-cloud-functions@v0'
@@ -47,3 +48,5 @@ jobs:
         name: 'get-reports'
         runtime: 'python3.10'
         entry_point: 'generate_report'
+        project_id: 'ique-star6ucks'
+
