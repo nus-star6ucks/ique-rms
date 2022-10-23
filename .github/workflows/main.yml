@@ -32,6 +32,7 @@ jobs:
       with:
         name: 'generate-report'
         runtime: 'python310'
+        region: 'asia-east2'
         entry_point: 'generate_report'
         project_id: '${{ env.PROJECT_ID }}'
         
