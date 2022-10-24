@@ -1,7 +1,6 @@
 """
 Includes Postgres DB configuration and connection
 """
-from peewee import *
 from playhouse.postgres_ext import *
 import sqlalchemy  # Postgres SQL Extension
 from sqlalchemy import Column
