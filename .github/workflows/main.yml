@@ -27,21 +27,14 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v0'
+      
+
     - id: 'deploy-generate-report'
-      uses: 'google-github-actions/deploy-cloud-functions@v0'
-      with:
-        name: 'generate-report'
-        runtime: 'python310'
-        region: 'asia-southeast1'
-        entry_point: 'generate_report'
-        project_id: '${{ env.PROJECT_ID }}'
+      run: 'gcloud functions deploy python-http-function --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=generate_report --trigger-http --allow-unauthenticated'
         
     - id: 'deploy-get-reports'
-      uses: 'google-github-actions/deploy-cloud-functions@v0'
-      with:
-        name: 'get-reports'
-        runtime: 'python310'
-        region: 'asia-southeast1'
-        entry_point: 'generate_report'
-        project_id: '${{ env.PROJECT_ID }}'
+      run: 'gcloud functions deploy python-http-function --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=get_reports --trigger-http --allow-unauthenticated'
+
 
