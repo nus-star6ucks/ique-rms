@@ -24,7 +24,9 @@ def get_reports(request):
     # print(f'* merchant id : {merchantId}')
     # print(f'* report id : {reportId}')
 
-    return json.dumps([object_as_dict(filter_reports(storeId, reportId, merchantId)) for ob in reports],
+    reports = filter_reports(storeId, reportId, merchantId)
+
+    return json.dumps([object_as_dict(ob) for ob in reports],
                       indent=4, sort_keys=True, default=str)
 
 
