@@ -1,6 +1,6 @@
 
 import functions_framework
-from function.report import Report
+from function.report import get_reports
 
 
 @functions_framework.http
@@ -18,7 +18,7 @@ def get_reports(request):
     # print(f'* merchant id : {merchantId}')
     # print(f'* report id : {reportId}')
 
-    reports = report.get_reports(storeId, reportId, merchantId)
+    reports = get_reports(storeId, reportId, merchantId)
 
     # for r in reports:
     #     print(f"& report id : {r['report_id']} ; create time : {r['create_time']} ; type : {r['type']}")

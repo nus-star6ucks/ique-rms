@@ -24,9 +24,9 @@ mysqldb = sqlalchemy.create_engine(
         username="queue-manager",
         password="rTJBMdkj6LrCSf0+",
         database="qms",
-        host='34.124.142.13'
-        # query=dict(
-        #     {"unix_socket": "/cloudsql/ique-star6ucks:asia-southeast1:queue-db"}),
+        # host='35.240.227.134'
+        query=dict(
+            {"unix_socket": "/cloudsql/ique-star6ucks:asia-southeast1:queue-db"}),
     ),
     pool_size=5,
     max_overflow=2,
@@ -40,9 +40,9 @@ pgdb = sqlalchemy.create_engine(
         username="ums",
         password="&2ZxqMQF'2{fQT}b",
         database="ique",
-        host='35.240.227.134'
-        # query=dict(
-        #     {"unix_socket": "/cloudsql/ique-star6ucks:asia-southeast1:iqueue"}),
+        # host='34.124.142.13'
+        query=dict(
+            {"unix_socket": "/cloudsql/ique-star6ucks:asia-southeast1:iqueue"}),
     ),
     pool_size=5,
     max_overflow=2,

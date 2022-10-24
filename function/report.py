@@ -110,8 +110,7 @@ class Report:
         # print(f'* end time : {self.end}')
         # save store DB entity
         store = pgSession.query(DB.Store).filter_by(id=self.storeID).first()
-        for s in store:
-            self.store = s
+        self.store = store
 
         # print(f'* store : {self.store.name}')
         # print(f'* merchant id : {self.store.merchant_id}')
