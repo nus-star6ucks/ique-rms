@@ -1,7 +1,6 @@
 """
 Includes Postgres DB configuration and connection
 """
-from playhouse.postgres_ext import *
 import sqlalchemy  # Postgres SQL Extension
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,13 +8,6 @@ from sqlalchemy.ext.declarative import declarative_base
 GCloud Postgres DB
 """
 # Connect to gcloud Postgres DB
-# DB name & user name
-# pgdb = PostgresqlExtDatabase(
-#     'ique', user='ums', password="&2ZxqMQF'2{fQT}b", host='/cloudsql/ique-star6ucks:asia-southeast1:iqueue')
-
-# mysqldb = MySQLDatabase('qms',  user='queue-manager',
-#                         password="rTJBMdkj6LrCSf0+", host='/cloudsql/ique-star6ucks:asia-southeast1:queue-db')
-# database name
 
 mysqldb = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
@@ -115,7 +107,6 @@ class Report(Base):
         self.unit = unit
         self.create_time = create_time
         self.url = url
-
 
 pgdb.connect()
 mysqldb.connect()
