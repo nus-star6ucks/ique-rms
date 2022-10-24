@@ -1,6 +1,13 @@
 
+import json
 import functions_framework
+from sqlalchemy import inspect
 from function.report import Report, filter_reports
+
+
+def object_as_dict(obj):
+    return {c.key: getattr(obj, c.key)
+            for c in inspect(obj).mapper.column_attrs}
 
 @functions_framework.http
 def get_reports(request):
@@ -17,9 +24,8 @@ def get_reports(request):
     # print(f'* merchant id : {merchantId}')
     # print(f'* report id : {reportId}')
 
-    reports = filter_reports(storeId, reportId, merchantId)
-
-    return reports
+    return json.dumps([object_as_dict(filter_reports(storeId, reportId, merchantId)) for ob in reports],
+                      indent=4, sort_keys=True, default=str)
 
 
 # @app.route('/generate', methods=['POST'])
