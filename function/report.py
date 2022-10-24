@@ -76,10 +76,10 @@ def filter_reports(stID, reportID, merchantID):
     :return reports: array[report]
     """
     if reportID is not None:
-       return mysqlSession.query(Report).filter_by(report_id=reportID).all()
+       return mysqlSession.query(DB.Report).filter_by(report_id=reportID).all()
     if stID is not None:
-        return mysqlSession.query(Report).filter_by(store_id=stID).all()
-    return mysqlSession.query(Report).filter_by(merchant_id=merchantID).all()
+        return mysqlSession.query(DB.Report).filter_by(store_id=stID).all()
+    return mysqlSession.query(DB.Report).filter_by(merchant_id=merchantID).all()
 
 class Report:
 
