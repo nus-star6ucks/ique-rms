@@ -67,7 +67,7 @@ unitValue = {
 unitValueReverse = dict(zip(unitValue.values(), unitValue.keys()))
 
 
-def get_reports(stID, reportID, merchantID):
+def filter_reports(stID, reportID, merchantID):
     """
     get reports from DB
     :param stID: report ID

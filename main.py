@@ -1,6 +1,6 @@
 
 import functions_framework
-from function.report import get_reports, Report
+from function.report import Report
 
 @functions_framework.http
 def get_reports(request):
@@ -17,7 +17,7 @@ def get_reports(request):
     # print(f'* merchant id : {merchantId}')
     # print(f'* report id : {reportId}')
 
-    reports = get_reports(storeId, reportId, merchantId)
+    reports = filter_reports(storeId, reportId, merchantId)
 
     return reports
 
