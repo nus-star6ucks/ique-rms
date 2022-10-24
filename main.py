@@ -17,9 +17,9 @@ def get_reports(request):
     :return list<URL>
     """
 
-    storeId = request.args.get('storeId')
-    merchantId = request.args.get('merchantId')
-    reportId = request.args.get('reportId')
+    storeId = request.args.get('storeId') or None
+    merchantId = request.args.get('merchantId') or None
+    reportId = request.args.get('reportId') or None
     # print(f'* store id : {storeId}')
     # print(f'* merchant id : {merchantId}')
     # print(f'* report id : {reportId}')
