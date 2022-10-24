@@ -1,6 +1,5 @@
 
 import functions_framework
-from function import report
 from function.report import Report
 
 

@@ -4,17 +4,22 @@ Includes all functions used to generate Report
 from enum import Enum
 import datetime
 import pandas as pd
+import sqlalchemy.orm as orm
 from DB import DB
 from function.visual import generate_url
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-
 firebase_admin.initialize_app(credentials.ApplicationDefault(), {
     'projectId': 'ique-star6ucks',
 })
 firestore_db = firestore.client()
 
+MysqlSession = orm.sessionmaker(bind=DB.mysqldb)
+PgSession = orm.sessionmaker(bind=DB.pgdb)
+
+mysqlSession = MysqlSession()
+pgSession = PgSession()
 
 class ReportType(Enum):
     AWT = 1  # average waiting time
@@ -71,17 +76,10 @@ def get_reports(stID, reportID, merchantID):
     :return reports: array[report]
     """
     if reportID is not None:
-        reports = DB.Report.select().where(
-            DB.Report.report_id == reportID).dicts()
+       return pgSession.query(Report).filter_by(report_id=reportID).all()
     elif stID is not None:
-        reports = DB.Report.select().where(
-            DB.Report.store_id == stID).dicts()
-    else:
-        reports = DB.Report.select().where(
-            DB.Report.merchant_id == merchantID).dicts()
-
-    return list(reports)
-
+        return pgSession.query(Report).filter_by(store_id=stID).all()
+    return pgSession.query(Report).filter_by(merchant_id=merchantID).all()
 
 class Report:
 
@@ -111,7 +109,7 @@ class Report:
         # print(f'* begin time : {self.begin}')
         # print(f'* end time : {self.end}')
         # save store DB entity
-        store = DB.Store.select().where(DB.Store.id == self.storeID)
+        store = pgSession.query(DB.Store).filter_by(id=self.storeID).first()
         for s in store:
             self.store = s
 
@@ -149,13 +147,14 @@ class Report:
         save data into DB: NoSQL / SQL
         """
         # save report into SQL
-        report = DB.Report.create(store_id=self.storeID,
-                                  type=self.reportType,
-                                  unit=self.unit,
-                                  create_time=self.createTime,
-                                  url=self.url,
-                                  merchant_id=self.store.merchant_id)
-        report.save()
+        report = DB.Report(store_id=self.storeID,
+                           type=self.reportType,
+                           unit=self.unit,
+                           create_time=self.createTime,
+                           url=self.url,
+                           merchant_id=self.store.merchant_id)
+        mysqlSession.add(report)
+        mysqlSession.commit()
 
         # get report ID
         self.ID = report.report_id
@@ -379,7 +378,8 @@ class Report:
         :return URL
         """
         # get array[ticket]
-        tickets = DB.Ticket.select().where(DB.Ticket.store_id == storeID)
+        tickets = mysqlSession.query(
+            DB.Ticket).filter_by(store_id=storeID).all()
 
         for t in tickets:
             t.start_time = datetime.datetime.fromtimestamp(t.start_time / 1e3)
@@ -389,8 +389,9 @@ class Report:
         #     print(f'# start time : {t.start_time}')
 
         # get seat type of the store
-        seatType = DB.Seattype.select().where(
-            DB.Seattype.store_id == storeID)
+        seatType = pgSession.query(DB.Seattype).filter_by(
+            store_id=storeID).first()
+
         # for s in seatType:
         #     print(f'# seat type id : {s.id}')
 
@@ -460,7 +461,8 @@ class Report:
         :return URL
         """
         # get array[ticket]1
-        tickets = DB.Ticket.select().where(DB.Ticket.store_id == storeID)
+        tickets = mysqlSession.query(
+            DB.Ticket).filter_by(store_id=storeID).all()
 
         for t in tickets:
             t.start_time = datetime.datetime.fromtimestamp(t.start_time / 1e3)
