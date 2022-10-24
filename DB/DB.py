@@ -18,7 +18,7 @@ GCloud Postgres DB
 #                         password="rTJBMdkj6LrCSf0+", host='/cloudsql/ique-star6ucks:asia-southeast1:queue-db')
 # database name
 
-pgdb = sqlalchemy.create_engine(
+mysqldb = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
         drivername="mysql+pymysql",
         username="queue-manager",
@@ -34,7 +34,7 @@ pgdb = sqlalchemy.create_engine(
     pool_recycle=1800
 )
 
-mysqldb = sqlalchemy.create_engine(
+pgdb = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
         drivername="postgresql+psycopg2",
         username="ums",
