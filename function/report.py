@@ -67,6 +67,8 @@ unitValue = {
 unitValueReverse = dict(zip(unitValue.values(), unitValue.keys()))
 
 
+
+
 def filter_reports(stID, reportID, merchantID):
     """
     get reports from DB
@@ -389,7 +391,7 @@ class Report:
 
         # get seat type of the store
         seatType = pgSession.query(DB.Seattype).filter_by(
-            store_id=storeID).first()
+            store_id=storeID).all()
 
         # for s in seatType:
         #     print(f'# seat type id : {s.id}')
