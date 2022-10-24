@@ -152,7 +152,7 @@ def setView(type, fig, store, creattime):
 
     filename = str(store.id) + "-" + str(creattime) + "-" + type + postfix
 
-    file_path = "./figure/" + filename
+    file_path = filename
     fig.write_html(file_path)
 
     blob = bucket.blob('reports/' + filename)
