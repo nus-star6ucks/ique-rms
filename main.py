@@ -1,6 +1,6 @@
 
 import functions_framework
-from function.report import Report
+from function.report import Report, filter_reports
 
 @functions_framework.http
 def get_reports(request):
