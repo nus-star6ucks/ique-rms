@@ -32,7 +32,7 @@ jobs:
       with:
         name: 'generate-report'
         runtime: 'python310'
-        region: 'asia-east2'
+        region: 'asia-southeast1'
         entry_point: 'generate_report'
         project_id: '${{ env.PROJECT_ID }}'
         
@@ -41,7 +41,7 @@ jobs:
       with:
         name: 'get-reports'
         runtime: 'python310'
-        region: 'asia-east2'
+        region: 'asia-southeast1'
         entry_point: 'generate_report'
         project_id: '${{ env.PROJECT_ID }}'
 
