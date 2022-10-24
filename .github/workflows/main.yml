@@ -32,9 +32,9 @@ jobs:
       
 
     - id: 'deploy-generate-report'
-      run: 'gcloud functions deploy python-http-function --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=generate_report --trigger-http --allow-unauthenticated'
+      run: 'gcloud functions deploy generate-report --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=generate_report --trigger-http --allow-unauthenticated'
         
     - id: 'deploy-get-reports'
-      run: 'gcloud functions deploy python-http-function --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=get_reports --trigger-http --allow-unauthenticated'
+      run: 'gcloud functions deploy get-reports --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=get_reports --trigger-http --allow-unauthenticated'
 
 
