@@ -39,9 +39,7 @@ pgdb = sqlalchemy.create_engine(
         username="ums",
         password="&2ZxqMQF'2{fQT}b",
         database="ique",
-        # host='34.124.142.13'
-        query=dict(
-            {"unix_socket": "/cloudsql/ique-star6ucks:asia-southeast1:iqueue"}),
+        host='/cloudsql/ique-star6ucks:asia-southeast1:iqueue'
     ),
     pool_size=5,
     max_overflow=2,
