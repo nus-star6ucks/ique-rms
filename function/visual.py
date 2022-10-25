@@ -8,7 +8,7 @@ from enum import Enum
 from google.cloud import storage
 
 storage_client = storage.Client()
-bucket = storage_client.bucket('ique-app-prod')
+bucket = storage_client.bucket('ique-app-reports')
 class UnitType(Enum):
     day = 12  # minium interval = 2 hours
     week = 7  # minium interval = day
