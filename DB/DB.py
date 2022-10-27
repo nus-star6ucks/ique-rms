@@ -15,11 +15,11 @@ GCloud Postgres DB
 mysqldb = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
         drivername="mysql+pymysql",
-        username=os['DB_MYSQL_USER'],
-        password=os['DB_MYSQL_PASS'],
-        database=os['DB_MYSQL_NAME'],
+        username=os.environ['DB_MYSQL_USER'],
+        password=os.environ['DB_MYSQL_PASS'],
+        database=os.environ['DB_MYSQL_NAME'],
         query=dict(
-            {"unix_socket": os['DB_MYSQL_UNIX_SOCKET'] }),
+            {"unix_socket": os.environ['DB_MYSQL_UNIX_SOCKET'] }),
     ),
     pool_size=5,
     max_overflow=2,
@@ -30,10 +30,10 @@ mysqldb = sqlalchemy.create_engine(
 pgdb = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
         drivername="postgresql+psycopg2",
-        username=os['DB_PG_USER'],
-        password=os['DB_PG_PASS'],
-        database=os['DB_PG_NAME'],
-        host=os['DB_PG_UNIX_SOCKET']
+        username=os.environ['DB_PG_USER'],
+        password=os.environ['DB_PG_PASS'],
+        database=os.environ['DB_PG_NAME'],
+        host=os.environ['DB_PG_UNIX_SOCKET']
     ),
     pool_size=5,
     max_overflow=2,
