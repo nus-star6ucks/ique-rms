@@ -4,6 +4,9 @@ Includes Postgres DB configuration and connection
 import sqlalchemy  # Postgres SQL Extension
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
+import os
+
+
 """
 GCloud Postgres DB
 """
@@ -12,12 +15,11 @@ GCloud Postgres DB
 mysqldb = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
         drivername="mysql+pymysql",
-        username="queue-manager",
-        password="rTJBMdkj6LrCSf0+",
-        database="qms",
-        # host='35.240.227.134'
+        username=os['DB_MYSQL_USER'],
+        password=os['DB_MYSQL_PASS'],
+        database=os['DB_MYSQL_NAME'],
         query=dict(
-            {"unix_socket": "/cloudsql/ique-star6ucks:asia-southeast1:queue-db"}),
+            {"unix_socket": os['DB_MYSQL_UNIX_SOCKET'] }),
     ),
     pool_size=5,
     max_overflow=2,
@@ -28,10 +30,10 @@ mysqldb = sqlalchemy.create_engine(
 pgdb = sqlalchemy.create_engine(
     sqlalchemy.engine.url.URL(
         drivername="postgresql+psycopg2",
-        username="ums",
-        password="&2ZxqMQF'2{fQT}b",
-        database="ique",
-        host='/cloudsql/ique-star6ucks:asia-southeast1:iqueue'
+        username=os['DB_PG_USER'],
+        password=os['DB_PG_PASS'],
+        database=os['DB_PG_NAME'],
+        host=os['DB_PG_UNIX_SOCKET']
     ),
     pool_size=5,
     max_overflow=2,
