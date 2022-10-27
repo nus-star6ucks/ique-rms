@@ -8,6 +8,15 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  DB_MYSQL_NAME: ${{ secrets.DB_MYSQL_NAME }}
+  DB_MYSQL_PASS: ${{ secrets.DB_MYSQL_PASS }}
+  DB_MYSQL_UNIX_SOCKET: ${{ secrets.DB_MYSQL_UNIX_SOCKET }}
+  DB_MYSQL_USER: ${{ secrets.DB_MYSQL_USER }}
+  DB_PG_NAME: ${{ secrets.DB_PG_NAME }}
+  DB_PG_PASS: ${{ secrets.DB_PG_PASS }}
+  DB_PG_UNIX_SOCKET: ${{ secrets.DB_PG_UNIX_SOCKET }}
+  DB_PG_USER: ${{ secrets.DB_PG_USER }}
+  
 jobs:
   setup-build-publish-deploy:
     name: Deploy
@@ -32,9 +41,9 @@ jobs:
       
 
     - id: 'deploy-generate-report'
-      run: 'gcloud functions deploy generate-report --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=generate_report --trigger-http --allow-unauthenticated'
+      run: 'gcloud functions deploy generate-report --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=generate_report --trigger-http --allow-unauthenticated --set-env-vars DB_MYSQL_NAME=$DB_MYSQL_NAME,DB_MYSQL_PASS=$DB_MYSQL_PASS,DB_MYSQL_UNIX_SOCKET=$DB_MYSQL_UNIX_SOCKET,DB_MYSQL_USER=$DB_MYSQL_USER,DB_PG_NAME=$DB_PG_NAME,DB_PG_PASS=$DB_PG_PASS,DB_PG_UNIX_SOCKET=$DB_PG_UNIX_SOCKET,DB_PG_USER=$DB_PG_USER'
         
     - id: 'deploy-get-reports'
-      run: 'gcloud functions deploy get-reports --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=get_reports --trigger-http --allow-unauthenticated'
+      run: 'gcloud functions deploy get-reports --gen2 --runtime=python310 --region=asia-southeast1 --source=. --entry-point=get_reports --trigger-http --allow-unauthenticated --set-env-vars DB_MYSQL_NAME=$DB_MYSQL_NAME,DB_MYSQL_PASS=$DB_MYSQL_PASS,DB_MYSQL_UNIX_SOCKET=$DB_MYSQL_UNIX_SOCKET,DB_MYSQL_USER=$DB_MYSQL_USER,DB_PG_NAME=$DB_PG_NAME,DB_PG_PASS=$DB_PG_PASS,DB_PG_UNIX_SOCKET=$DB_PG_UNIX_SOCKET,DB_PG_USER=$DB_PG_USER'
 
 
