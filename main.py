@@ -20,9 +20,6 @@ def get_reports(request):
     storeId = request.args.get('storeId') or None
     merchantId = request.args.get('merchantId') or None
     reportId = request.args.get('reportId') or None
-    # print(f'* store id : {storeId}')
-    # print(f'* merchant id : {merchantId}')
-    # print(f'* report id : {reportId}')
 
     reports = filter_reports(storeId, reportId, merchantId)
 
@@ -38,18 +35,11 @@ def generate_report(request):
     generate the specific report for the store
     :param request: storeID, reportType, unit
     """
-    # print('$ generate method')
 
-    # storeID = request.args.get('storeId')
-    # reportType = request.args.get('reportType')
-    # unit = request.args.get('unit', 'week')
 
     storeID = request.json['storeId']
     reportType = request.json['reportType']
     unit = request.json['unit']
-    # print(f'* store id : {storeID}')
-    # print(f'* report type : {reportType}')
-    # print(f'* unit : {unit}')
 
     # generate report
     newreport = Report(storeID, reportType, unit)

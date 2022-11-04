@@ -45,21 +45,17 @@ def generate_url(type, data, unit, store, creattime):
     for idx in range(0, ending):
         # extract data part
         allvaule += data['Period ' + str(idx + 1)]
-        # print(f'# diagram value : {allvaule}')
 
     df = pd.DataFrame(allvaule)
     ChartTitle = "【" + store.name + "】 "
 
-    # print(f'# report type : {type}')
     if type == "AWT":
-        # print('# get x & y')
         secondD = "Average Wait Time"
         thirdD = "Seat Type"
         ChartTitle += secondD + " Report (" + unitValueReverse[unit] + ")"
         fig = px.line(df, x="Time", y=secondD, color=thirdD, title=ChartTitle, symbol=thirdD)  # line chart
         fig.update_layout(yaxis_title='Average Wait Time (s)')
     else:
-        # print('# dont get x & y')
         secondD = "Number"
         thirdD = "Status"
         ChartTitle += "People Number Report (" + unitValueReverse[unit] + ")"
@@ -67,12 +63,9 @@ def generate_url(type, data, unit, store, creattime):
                      text_auto=True)  # bar chart
         fig.update_layout(yaxis_title='Number (person)')
 
-    # print(f'* title : {ChartTitle}')
 
-    # fig.show()
 
     setView(type, fig, store, creattime)
-    # print(f'* visualization : {fig}')
 
     return base_destination_path + str(store.id) + "-" + str(creattime) + "-" + type + postfix
 
@@ -144,7 +137,6 @@ def setView(type, fig, store, creattime):
             ),
             bargap=0.15,
             bargroupgap=0.1,
-            # plot_bgcolor='white'
         )
         fig.update_traces(textfont_size=15, textfont_color='black', textangle=0, textposition="outside", cliponaxis=False)
 
