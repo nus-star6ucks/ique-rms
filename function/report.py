@@ -36,19 +36,6 @@ class UnitType(Enum):
 twohour = 60 * 60 * 2
 oneday = twohour * 12
 oneweek = oneday * 7
-# onemonth = [oneday * 31,
-#             oneday * 28,
-#             oneday * 31,
-#             oneday * 30,
-#             oneday * 31,
-#             oneday * 30,
-#             oneday * 31,
-#             oneday * 31,
-#             oneday * 30,
-#             oneday * 31,
-#             oneday * 30,
-#             oneday * 31
-#             ]
 
 ticketStatus = ['seated', 'pending', 'skipped']
 
@@ -97,7 +84,6 @@ class Report:
         self.reportType = rtype
         self.unit = timeunit
         self.createTime = datetime.datetime.now()  # year-month-day hour-minute-second
-        # print(f'* create time : {self.createTime}')
         self.data = None  #
         self.DBdata = None  # data formal for DB
         self.url = None
@@ -114,9 +100,6 @@ class Report:
         store = pgSession.query(DB.Store).filter_by(id=self.storeID).first()
         self.store = store
 
-        # print(f'* store : {self.store.name}')
-        # print(f'* merchant id : {self.store.merchant_id}')
-        # print('$ start generating .....')
 
         # generate url of this report
         self.generate_report(
@@ -128,8 +111,6 @@ class Report:
         # print(f'* Create URL Successful : {self.url}')
         # save report into SQL
         self.save_data()
-        # print(f'* report id : {self.ID}')
-        # print('* Done !')
 
     def generate_report(self, storeID, rtype, unit):
         """
@@ -182,14 +163,12 @@ class Report:
             u'data': self.data
         })
 
-        # print('* Save DB successfully !')
 
     def get_begin_time(self, unit):
         """
         count begin time
         :param unit
         """
-        # print(f'* unit : {unit}')
 
         # set integrate value: year-month-day-0-0-0-0
         if unit == UnitType.day.value:
@@ -214,7 +193,6 @@ class Report:
         :param factor: count factor
         :return new-time
         """
-        # print(f'& begin time : {time} ; factor : {factor}')
         if op == '-':
             if unit == UnitType.day.value:
                 return time - pd.DateOffset(hours=factor * 2)
@@ -230,8 +208,6 @@ class Report:
             elif unit == UnitType.week.value:
                 return time + pd.DateOffset(days=factor)
             elif unit == UnitType.month.value:
-                # print('* count month')
-                # print(f'& result time : {time + pd.DateOffset(weeks=factor)}')
                 return time + pd.DateOffset(weeks=factor)
             elif unit == UnitType.year.value:
                 return time + pd.DateOffset(months=factor)
@@ -244,7 +220,6 @@ class Report:
         :return new-tickets[]
         """
         newTickets = [[]] * 12
-        # print(f'& test new tickets array : {newTickets}')
         factor = None
         # day: 12 * 2hours
         # week: 7 * 1day
@@ -262,7 +237,6 @@ class Report:
         # and divided by 2 to get interval sequence
         # round down
         for t in tickets:
-            # print(f'& ticket start time : {t.start_time}')
             if unit is UnitType.year.value:                    # divided by month
                 zone = t.start_time.month       # firstly divided by its month
 
@@ -277,13 +251,9 @@ class Report:
             else:
                 zone = int(
                     (t.start_time - self.begin).total_seconds() / factor)
-            # print(f'& zone : {zone}')
             if len(newTickets[zone]) == 0:
                 newTickets[zone] = []
             newTickets[zone].append(t)
-        #     print(f'& new tickets : {newTickets}')
-        # print('# ticket time zone')
-        # print(newTickets)
         return newTickets
 
     def filter(self, type, tickets, unit, seatType):
@@ -303,9 +273,7 @@ class Report:
             # ticket's start time should greater than or equal to beginTime
             # and its start time should not greater than endTime
             for t in tickets:
-                # print(f'# ticket id : {t.ticket_id} ; start time : {t.start_time}')
                 if self.begin <= t.start_time < self.end:
-                    # print(f'# YES ')
                     Tickets.append(t)
             # print(f'# selected tickets : {Tickets}')
             # divided tickets according to unit
@@ -328,15 +296,11 @@ class Report:
             # create array for every seat type ID
             for stype in seatType:
                 result[str(stype.id)] = []
-                # print(f'& seat type : {stype.id}')
 
             # group tickets by its seat type ID
             for t in tickets:
-                # print(f'& ticket : {t.ticket_id} ; seat type:{t.id}')
                 result[str(t.id)].append(t)
 
-        # print(f'& result array : {result}')
-        # print(f'$ {type} / filter finish !! ')
         return result
 
     def reset_timezone(self, unit):
@@ -386,15 +350,11 @@ class Report:
             t.start_time = datetime.datetime.fromtimestamp(t.start_time / 1e3)
             t.end_time = datetime.datetime.fromtimestamp(t.end_time / 1e3)
 
-        # for t in tickets:
-        #     print(f'# start time : {t.start_time}')
 
         # get seat type of the store
         seatType = pgSession.query(DB.Seattype).filter_by(
             store_id=storeID).all()
 
-        # for s in seatType:
-        #     print(f'# seat type id : {s.id}')
 
         # filter tickets by time
         tickets = self.filter('time', tickets, unit, {})['time']
@@ -407,14 +367,9 @@ class Report:
         # filter every time zone tickets by seat type
         idx = 0
         for tlist in tickets[:ending]:
-            # if not tlist:
-            #     break
-            # print(f'# time zone : {idx}')
             idx += 1
             newtickets.append(self.filter('seat', tlist, unit, seatType))
 
-        # print('* new tickets filter by seat type')
-        # print(newtickets)
 
         # save data and divided by period time
         Data = {}
@@ -431,25 +386,17 @@ class Report:
                 # only count when there are tickets
                 AWT = {'Time': T, 'Seat Type': stype.name,
                        'Seat Type Id': stype.id, 'Average Wait Time': 0}
-                # print(f'& ticket list : {tlist[str(stype.id)]}')
-                # print(f'& list length : {len(tlist[str(stype.id)])}')
                 if len(tlist[str(stype.id)]) > 0:
                     for t in tlist[str(stype.id)]:
-                        # print(f"& ticket : {t.end_time} ; {t.start_time}")
-                        # print(f"& ticket time : {t.end_time - t.start_time}")
                         AWT['Average Wait Time'] += (t.end_time -
                                                      t.start_time).total_seconds() / 60
-                    # print(f"# Sum AWT : {AWT['Average Wait Time']}")
-                    # print(f'# ticket amount : {len(tlist[str(stype.id)])}')
                     AWT['Average Wait Time'] = int(
                         AWT['Average Wait Time'] / len(tlist[str(stype.id)]))  # assign new value to AWT
                 # print(f'* AWT : {AWT}')
                 # period : array[data{time;seattype;seattypeid;awt}]
                 Data['Period ' + str(idx + 1)].append(AWT)
-                # print(f'* {Data}')
             idx += 1
 
-        # print(f'* {Data}')
 
         # save generated data
         self.data = Data
@@ -479,12 +426,9 @@ class Report:
         idx = 0
         # filter tickets by status
         for tlist in tickets[:ending]:
-            # print(f'# time zone : {idx}')
             idx += 1
             newtickets.append(self.filter('status', tlist, unit, {}))
 
-        # print('* new tickets filter by status')
-        # print(newtickets)
 
         # save data and divided by period time
         Data = {}
@@ -498,7 +442,6 @@ class Report:
                 # print(f'# data : {num}')
                 # period : data{time;number
                 Data['Period ' + str(idx + 1)].append(num)
-            # print(f'* {Data}')
             idx += 1
 
         # save generated data
